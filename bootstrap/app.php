@@ -15,7 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // $middleware->append(JwtMiddleware::class);
+        $middleware->alias([
+            'checkAuth' => \App\Http\Middleware\CheckAuth::class,
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'auth:api' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         // $exceptions->render(function (AuthenticationException $e, Request $request) {

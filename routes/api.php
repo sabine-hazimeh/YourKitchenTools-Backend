@@ -15,8 +15,13 @@ Route::middleware([JwtMiddleware::class])->group(function () {
     Route::get('user', [AuthController::class, 'getUser']);
     Route::post('logout', [AuthController::class, 'logout']);
 });
-Route::apiResource('products', ProductController::class);
-Route::get('/test-log', function () {
-    Log::info('Test log message');
-    return 'Log message written!';
+// Route::middleware(['auth:api','checkAuth','admin'])->group(function () {
+// Route::apiResource('products', ProductController::class);
+// });
+Route::get('products', [ProductController::class, 'index']);  // Users can view products
+Route::get('products/{product}', [ProductController::class, 'show']);
+Route::middleware(['auth:api', 'checkAuth', 'admin'])->group(function () {
+    Route::post('products', [ProductController::class, 'store']); // Only admin can create
+    Route::put('products/{product}', [ProductController::class, 'update']); // Only admin can update
+    Route::delete('products/{product}', [ProductController::class, 'destroy']); // Only admin can delete
 });
