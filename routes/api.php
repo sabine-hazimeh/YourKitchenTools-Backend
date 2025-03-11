@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Controllers\ProductController;
-
+use App\Http\Controllers\CartController;
 
 
 Route::post('register', [AuthController::class, 'register']);
@@ -25,3 +25,7 @@ Route::middleware(['auth:api', 'checkAuth', 'admin'])->group(function () {
     Route::put('products/{product}', [ProductController::class, 'update']);
     Route::delete('products/{product}', [ProductController::class, 'destroy']);
 });
+Route::middleware(['auth:api','checkAuth'])->group(function () {
+Route::apiResource('cart', CartController::class);
+});
+Route::middleware('auth:api')->get('/CartByUser/{Id}', [CartController::class, 'getCartForUser']);

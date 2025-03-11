@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
-
+use App\Models\Cart;
 class AuthController extends Controller
 {
     // User registration
@@ -22,11 +22,12 @@ class AuthController extends Controller
             'address' => 'required|string|max:255',
             'role' => 'required|string|max:255',
         ]);
-
+    
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
         }
-
+    
+        // Create user
         $user = User::create([
             'name' => $request->get('name'),
             'email' => $request->get('email'),
@@ -35,11 +36,22 @@ class AuthController extends Controller
             'address' => $request->get('address'),
             'role' => $request->get('role'),
         ]);
-
+    
+        // Create a cart for the user immediately
+        $cart = Cart::create([
+            'user_id' => $user->id,  // Associate the cart with the newly created user
+        ]);
+    
+        // Create JWT token for user
         $token = JWTAuth::fromUser($user);
-
-        return response()->json(compact('user','token'), 201);
+    
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+            'cart' => $cart  // Return the created cart as part of the response
+        ], 201);
     }
+    
 
     // User login
     public function login(Request $request)
