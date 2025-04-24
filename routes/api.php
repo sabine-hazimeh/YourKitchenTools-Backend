@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartItemsController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\ImageController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -20,6 +21,7 @@ Route::middleware([JwtMiddleware::class])->group(function () {
 // Route::apiResource('products', ProductController::class);
 // });
 Route::get('products', [ProductController::class, 'index']);  
+Route::get('newArrivals', [ProductController::class, 'newArrivals']);
 Route::get('products/{product}', [ProductController::class, 'show']);
 Route::middleware(['auth:api', 'checkAuth', 'admin'])->group(function () {
     Route::post('products', [ProductController::class, 'store']); 
@@ -33,11 +35,12 @@ Route::middleware(['auth:api','checkAuth'])->group(function () {
     Route::get('/CartByUser/{Id}', [CartController::class, 'getCartForUser']);
     Route::apiResource('/wishlist', WishlistController::class);
 });
-
+Route::get('/products/{productId}/images', [ImageController::class, 'imagesByProduct']);
 // Route::middleware('auth:sanctum')->group(function () {
 //     Route::get('/wishlist', [WishlistController::class, 'index']); // Get wishlist items
 //     Route::post('/wishlist', [WishlistController::class, 'store']); // Add to wishlist
 //     Route::delete('/wishlist/{product_id}', [WishlistController::class, 'destroy']); // Remove from wishlist
 // });
+Route::get('newArrivalsWithImages', [ProductController::class, 'newArrivalsWithImages']);
 
 
